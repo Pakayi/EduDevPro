@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EduDev Pro - Standalone Edition</title>
+    <title>EduDev Pro - Edisi Administrasi Lengkap</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -33,11 +33,6 @@
         line-height: 1.8;
         color: #475569;
       }
-      #outputArea ul {
-        list-style-type: disc;
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-      }
       #outputArea table {
         width: 100%;
         border-collapse: collapse;
@@ -53,8 +48,6 @@
       #outputArea th {
         background-color: #f8fafc;
         font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.75rem;
       }
 
       .spinner {
@@ -93,7 +86,7 @@
             <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900">E</div>
             <h1 class="text-xl font-bold tracking-tight">EduDev<span class="text-amber-500">Pro</span></h1>
           </div>
-          <p class="text-[9px] text-slate-500 uppercase font-bold tracking-[0.2em]">Edisi Mandiri (Standalone)</p>
+          <p class="text-[9px] text-slate-500 uppercase font-bold tracking-[0.2em]">Administrasi Lengkap Jabar</p>
         </div>
 
         <nav class="flex-1 px-4 space-y-1.5 mt-4">
@@ -105,13 +98,12 @@
           </button>
         </nav>
 
-        <!-- User Badge -->
         <div class="p-4 m-4 rounded-2xl bg-slate-800/50 border border-white/5">
-          <div id="userBadge" class="flex items-center gap-3 transition-opacity duration-700">
+          <div id="userBadge" class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-slate-900 shadow-inner" id="userInitial">G</div>
             <div class="overflow-hidden">
-              <p class="text-xs font-bold truncate" id="sideTeacherName">Pengguna Lokal</p>
-              <p class="text-[9px] text-slate-500 truncate italic" id="sideSchoolName">Sekolah Belum Diatur</p>
+              <p class="text-xs font-bold truncate" id="sideTeacherName">Guru Pengguna</p>
+              <p class="text-[9px] text-slate-500 truncate italic" id="sideSchoolName">Sekolah...</p>
             </div>
           </div>
         </div>
@@ -120,80 +112,105 @@
       <!-- Main -->
       <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         <header class="h-20 bg-white/80 backdrop-blur-md border-b flex items-center justify-between px-8 sticky top-0 z-40">
-          <div class="flex items-center gap-6">
-            <div class="flex flex-col">
-              <label class="text-[9px] font-black text-slate-400 uppercase mb-1">Mata Pelajaran</label>
-              <select id="mainSubject" class="font-bold text-slate-800 bg-transparent outline-none cursor-pointer hover:text-amber-500 transition-colors">
-                <optgroup label="Pelajaran Inti">
-                  <option value="Matematika">Matematika</option>
-                  <option value="IPA">IPA</option>
-                  <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                  <option value="Bahasa Inggris">Bahasa Inggris</option>
-                </optgroup>
-                <optgroup label="Praktek & Seni">
-                  <option value="PJOK">PJOK (Olahraga)</option>
-                  <option value="Seni Budaya">Seni Budaya</option>
-                </optgroup>
-                <optgroup label="Lokal">
-                  <option value="Bahasa Sunda">Bahasa Sunda</option>
-                </optgroup>
-              </select>
-            </div>
+          <div class="flex flex-col">
+            <label class="text-[9px] font-black text-slate-400 uppercase mb-1">Mata Pelajaran</label>
+            <select id="mainSubject" class="font-bold text-slate-800 bg-transparent outline-none cursor-pointer hover:text-amber-500">
+              <option value="Matematika">Matematika</option>
+              <option value="IPA">IPA</option>
+              <option value="IPS">IPS</option>
+              <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+              <option value="Bahasa Inggris">Bahasa Inggris</option>
+              <option value="Bahasa Sunda">Bahasa Sunda</option>
+              <option value="Informatika">Informatika</option>
+              <option value="PAI">Pendidikan Agama Islam</option>
+              <option value="PPKn">Pendidikan Pancasila</option>
+            </select>
           </div>
           <div id="statusIndicator" class="px-3 py-1 bg-rose-50 border border-rose-100 rounded-full flex items-center gap-2">
             <div class="w-1.5 h-1.5 bg-rose-500 rounded-full"></div>
-            <span class="text-[10px] font-bold text-rose-600">MEMBUTUHKAN API KEY</span>
+            <span class="text-[10px] font-bold text-rose-600 uppercase tracking-tighter">API KEY DIBUTUHKAN</span>
           </div>
         </header>
 
-        <!-- Dashboard Content -->
-        <div id="dashboardTab" class="p-6 lg:p-10 space-y-10">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <button onclick="openModal('Modul Ajar')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-left group">
-              <div class="text-2xl mb-4">📘</div>
-              <h4 class="font-bold text-slate-800 text-sm">Modul Ajar</h4>
+        <!-- Dashboard -->
+        <div id="dashboardTab" class="p-6 lg:p-10 space-y-8">
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <button onclick="openModal('Modul Ajar')" class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-center">
+              <div class="text-xl mb-2">📘</div>
+              <h4 class="font-bold text-slate-800 text-xs">Modul Ajar</h4>
             </button>
-            <button onclick="openModal('Asesmen')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-left group">
-              <div class="text-2xl mb-4">📝</div>
-              <h4 class="font-bold text-slate-800 text-sm">Asesmen</h4>
+            <button onclick="openModal('Asesmen')" class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-center">
+              <div class="text-xl mb-2">📝</div>
+              <h4 class="font-bold text-slate-800 text-xs">Asesmen</h4>
             </button>
-            <button onclick="openModal('ATP')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-left group">
-              <div class="text-2xl mb-4">🛤️</div>
-              <h4 class="font-bold text-slate-800 text-sm">Alur (ATP)</h4>
+            <button onclick="openModal('ATP')" class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-center">
+              <div class="text-xl mb-2">🛤️</div>
+              <h4 class="font-bold text-slate-800 text-xs">Alur (ATP)</h4>
             </button>
-            <button onclick="openModal('Media')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-left group">
-              <div class="text-2xl mb-4">🎞️</div>
-              <h4 class="font-bold text-slate-800 text-sm">Media Ajar</h4>
+            <button onclick="openModal('Media')" class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-center">
+              <div class="text-xl mb-2">🎞️</div>
+              <h4 class="font-bold text-slate-800 text-xs">Media</h4>
             </button>
-            <button onclick="openModal('CP/TP')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-left group">
-              <div class="text-2xl mb-4">📄</div>
-              <h4 class="font-bold text-slate-800 text-sm">CP & TP</h4>
+            <button onclick="openModal('CP/TP')" class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-amber-500 transition-all text-center">
+              <div class="text-xl mb-2">📄</div>
+              <h4 class="font-bold text-slate-800 text-xs">CP/TP</h4>
             </button>
           </div>
 
-          <div class="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-8 min-h-[500px]" id="outputArea">
-            <div class="flex flex-col items-center justify-center h-full text-slate-300 py-32">
-              <span class="text-5xl mb-4">✨</span>
-              <p class="font-bold uppercase tracking-widest text-xs">Pilih fitur untuk mulai generate</p>
+          <div class="bg-white rounded-3xl border border-slate-100 shadow-xl p-8 min-h-[600px]" id="outputArea">
+            <div class="flex flex-col items-center justify-center h-full text-slate-300 py-40 text-center">
+              <span class="text-4xl mb-4">🪄</span>
+              <p class="font-bold uppercase tracking-widest text-[10px]">Pilih fitur untuk membuat perangkat ajar</p>
             </div>
           </div>
         </div>
 
-        <!-- Profile & API Tab -->
-        <div id="profileTab" class="hidden p-6 lg:p-10 space-y-6">
-          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-            <h3 class="font-black text-slate-800 mb-2">Pengaturan API Key</h3>
-            <p class="text-sm text-slate-600 mb-4">Aplikasi ini membutuhkan API Key Gemini (Gratis). <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-amber-600 underline font-bold">Dapatkan di sini</a>.</p>
-            <input type="password" id="userApiKey" placeholder="Tempel API Key Anda di sini..." class="w-full p-4 rounded-xl border border-amber-200 outline-none font-mono text-sm mb-4" />
-            <button onclick="saveToLocal()" class="bg-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-amber-600 transition-all">Simpan Konfigurasi</button>
-          </div>
-
-          <div class="bg-white border border-slate-200 rounded-2xl p-8 space-y-6">
-            <h3 class="font-black text-slate-800">Identitas Guru</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" id="teacherName" placeholder="Nama Lengkap" class="p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none" />
-              <input type="text" id="schoolName" placeholder="Nama Sekolah" class="p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none" />
+        <!-- Profile Tab -->
+        <div id="profileTab" class="hidden p-6 lg:p-10">
+          <div class="max-w-3xl mx-auto space-y-6">
+            <!-- API Key -->
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+              <h3 class="font-black text-slate-800 mb-2">🔑 Pengaturan API Key</h3>
+              <p class="text-xs text-slate-600 mb-4">Dapatkan API Key gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-amber-600 underline font-bold">Google AI Studio</a>.</p>
+              <input type="password" id="userApiKey" placeholder="Tempel API Key Gemini Anda..." class="w-full p-3 rounded-xl border border-amber-200 outline-none font-mono text-sm bg-white" />
             </div>
+
+            <!-- Identity -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 space-y-8 shadow-sm">
+              <div>
+                <h3 class="font-black text-slate-800 mb-4 border-b pb-2">👤 Identitas Guru</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Nama & Gelar</label>
+                    <input type="text" id="teacherName" class="w-full p-3 rounded-lg border border-slate-100 bg-slate-50 outline-none focus:ring-2 focus:ring-amber-500" />
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">NIP Guru</label>
+                    <input type="text" id="teacherNIP" placeholder="19XXXXXXXXXXXX" class="w-full p-3 rounded-lg border border-slate-100 bg-slate-50 outline-none focus:ring-2 focus:ring-amber-500" />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Nama Sekolah</label>
+                    <input type="text" id="schoolName" class="w-full p-3 rounded-lg border border-slate-100 bg-slate-50 outline-none focus:ring-2 focus:ring-amber-500" />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="font-black text-slate-800 mb-4 border-b pb-2">🏢 Pengesahan (Kepala Sekolah)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Nama Kepala Sekolah</label>
+                    <input type="text" id="headmasterName" class="w-full p-3 rounded-lg border border-slate-100 bg-slate-50 outline-none focus:ring-2 focus:ring-amber-500" />
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">NIP Kepala Sekolah</label>
+                    <input type="text" id="headmasterNIP" class="w-full p-3 rounded-lg border border-slate-100 bg-slate-50 outline-none focus:ring-2 focus:ring-amber-500" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button onclick="saveToLocal()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all">Simpan Semua Data 💾</button>
           </div>
         </div>
       </main>
@@ -202,45 +219,50 @@
     <!-- Modals -->
     <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4">
       <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8">
-        <h3 class="text-xl font-bold text-slate-800 mb-4">Generate <span id="modalTypeName" class="text-amber-500"></span></h3>
-        <input type="text" id="topicInput" placeholder="Contoh: Ekosistem Laut" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none mb-6" />
+        <h3 class="text-xl font-bold text-slate-800 mb-2">Generate <span id="modalTypeName" class="text-amber-500"></span></h3>
+        <p class="text-xs text-slate-400 mb-6 italic">Materi akan diproses sesuai standar Kurikulum Merdeka Jabar.</p>
+        <input type="text" id="topicInput" placeholder="Contoh: Energi Terbarukan" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none mb-6" />
         <div class="flex gap-3">
           <button onclick="closeModal()" class="flex-1 py-3 font-bold text-slate-400">Batal</button>
-          <button onclick="handleGenerate()" class="flex-2 px-8 py-3 bg-amber-500 text-white rounded-xl font-bold">Mulai</button>
+          <button onclick="handleGenerate()" class="flex-[2] py-3 bg-amber-500 text-white rounded-xl font-bold">Generate Draf</button>
         </div>
       </div>
     </div>
 
-    <div id="loadingOverlay" class="fixed inset-0 bg-white/90 hidden z-[200] flex flex-col items-center justify-center">
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/95 hidden z-[200] flex flex-col items-center justify-center">
       <div class="spinner"></div>
-      <p class="mt-4 font-bold text-slate-800">AI sedang bekerja...</p>
+      <p class="mt-6 font-bold text-slate-800">AI sedang menyusun administrasi...</p>
     </div>
 
     <script>
-      // -- STANDALONE LOGIC --
-      // Kita menggunakan localStorage sebagai cadangan jika Firebase tidak terdeteksi
       let config = {
         apiKey: localStorage.getItem("edudev_apikey") || "",
-        name: localStorage.getItem("edudev_name") || "Guru Pengguna",
-        school: localStorage.getItem("edudev_school") || "Sekolah Belum Diatur",
+        name: localStorage.getItem("edudev_name") || "",
+        nip: localStorage.getItem("edudev_nip") || "",
+        school: localStorage.getItem("edudev_school") || "",
+        hmName: localStorage.getItem("edudev_hmName") || "",
+        hmNip: localStorage.getItem("edudev_hmNip") || "",
       };
 
       window.onload = () => {
         document.getElementById("userApiKey").value = config.apiKey;
         document.getElementById("teacherName").value = config.name;
+        document.getElementById("teacherNIP").value = config.nip;
         document.getElementById("schoolName").value = config.school;
+        document.getElementById("headmasterName").value = config.hmName;
+        document.getElementById("headmasterNIP").value = config.hmNip;
         updateStatus();
       };
 
       function updateStatus() {
         const status = document.getElementById("statusIndicator");
         if (config.apiKey) {
-          status.innerHTML = `<div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div><span class="text-[10px] font-bold text-emerald-600">AI READY</span>`;
+          status.innerHTML = `<div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div><span class="text-[10px] font-bold text-emerald-600">AI TERHUBUNG</span>`;
           status.className = "px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full flex items-center gap-2";
         }
-        document.getElementById("sideTeacherName").innerText = config.name;
-        document.getElementById("sideSchoolName").innerText = config.school;
-        document.getElementById("userInitial").innerText = config.name.charAt(0);
+        document.getElementById("sideTeacherName").innerText = config.name || "Guru Pengguna";
+        document.getElementById("sideSchoolName").innerText = config.school || "Sekolah...";
+        document.getElementById("userInitial").innerText = (config.name || "G").charAt(0).toUpperCase();
       }
 
       function switchTab(tab) {
@@ -252,22 +274,28 @@
 
       function saveToLocal() {
         config.apiKey = document.getElementById("userApiKey").value.trim();
-        config.name = document.getElementById("teacherName").value.trim() || "Guru Pengguna";
-        config.school = document.getElementById("schoolName").value.trim() || "Sekolah Belum Diatur";
+        config.name = document.getElementById("teacherName").value.trim();
+        config.nip = document.getElementById("teacherNIP").value.trim();
+        config.school = document.getElementById("schoolName").value.trim();
+        config.hmName = document.getElementById("headmasterName").value.trim();
+        config.hmNip = document.getElementById("headmasterNIP").value.trim();
 
         localStorage.setItem("edudev_apikey", config.apiKey);
         localStorage.setItem("edudev_name", config.name);
+        localStorage.setItem("edudev_nip", config.nip);
         localStorage.setItem("edudev_school", config.school);
+        localStorage.setItem("edudev_hmName", config.hmName);
+        localStorage.setItem("edudev_hmNip", config.hmNip);
 
         updateStatus();
-        alert("Pengaturan Berhasil Disimpan Lokal!");
+        alert("Profil Lengkap Berhasil Disimpan!");
         switchTab("dashboard");
       }
 
       let currentType = "";
       function openModal(type) {
         if (!config.apiKey) {
-          alert("Isi API Key dulu di tab profil!");
+          alert("Bro, isi API Key dulu ya di tab Profil!");
           switchTab("profile");
           return;
         }
@@ -288,19 +316,25 @@
         document.getElementById("loadingOverlay").classList.remove("hidden");
 
         const subject = document.getElementById("mainSubject").value;
-        const prompt = `Buatlah draf ${currentType} untuk mata pelajaran ${subject} dengan materi ${topic}. Format dalam HTML (h2, p, table). Sertakan nama guru: ${config.name} dan sekolah: ${config.school}`;
+        const prompt = `Buatlah perangkat ajar lengkap jenis ${currentType} untuk Mapel ${subject} materi ${topic}. 
+            Sesuaikan dengan Kurikulum Merdeka Jabar.
+            Identitas Guru: ${config.name}, NIP: ${config.nip}, Sekolah: ${config.school}. 
+            Identitas Pengesahan: Kepala Sekolah ${config.hmName}, NIP: ${config.hmNip}.
+            Gunakan format HTML yang rapi dengan tabel di bagian identitas modul dan bagian tanda tangan di bawah.`;
 
         try {
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${config.apiKey}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              systemInstruction: { parts: [{ text: "Gunakan Bahasa Indonesia formal pendidikan. Output HANYA HTML murni tanpa blok markdown." }] },
+            }),
           });
           const data = await res.json();
-          const html = data.candidates[0].content.parts[0].text.replace(/```html|```/g, "");
-          document.getElementById("outputArea").innerHTML = html;
+          document.getElementById("outputArea").innerHTML = data.candidates[0].content.parts[0].text;
         } catch (e) {
-          alert("Gagal menghubungi AI. Cek API Key Anda.");
+          alert("Gagal konek ke AI. Cek koneksi atau API Key.");
         } finally {
           document.getElementById("loadingOverlay").classList.add("hidden");
         }
