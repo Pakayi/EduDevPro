@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduDev Pro - Asisten Perangkat Ajar Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        
+        /* Tipografi untuk Dokumen Hasil Generate */
+        #outputArea h2 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
+        #outputArea h3 { font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.25rem; }
+        #outputArea p { margin-bottom: 1rem; line-height: 1.8; color: #475569; }
+        #outputArea ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+        #outputArea table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+        #outputArea th, #outputArea td { border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left; }
+        #outputArea th { background-color: #f8fafc; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
+
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #f59e0b; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .nav-item.active { background-color: #f59e0b; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <div id="app" class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 text-white hidden lg:flex flex-col sticky top-0 h-screen shadow-2xl">
+            <div class="p-8">
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900">E</div>
+                    <h1 class="text-xl font-bold tracking-tight">EduDev<span class="text-amber-500">Pro</span></h1>
+                </div>
+                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-[0.2em]">Edisi Khusus Jawa Barat</p>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-1.5 mt-4">
+                <button id="navDash" onclick="switchTab('dashboard')" class="nav-item active w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-slate-800">
+                    <span class="text-lg">🏠</span> <span class="text-sm font-semibold">Dashboard</span>
+                </button>
+                <button id="navProf" onclick="switchTab('profile')" class="nav-item w-full flex items-center gap-3 p-3 rounded-xl text-slate-400 transition-all hover:bg-slate-800">
+                    <span class="text-lg">👤</span> <span class="text-sm font-semibold">Profil Pengajar</span>
+                </button>
+                
+                <div class="pt-8 pb-2 px-4 text-[10px] font-black text-slate-600 uppercase tracking-widest">Akses Pengguna</div>
+                <button onclick="confirmLogout()" class="w-full flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all group">
+                    <span class="text-lg group-hover:scale-110 transition-transform">🚪</span> <span class="text-sm font-semibold">Ganti Akun</span>
+                </button>
+            </nav>
+
+            <!-- User Badge -->
+            <div class="p-4 m-4 rounded-2xl bg-slate-800/50 border border-white/5">
+                <div id="userBadge" class="flex items-center gap-3 opacity-0 transition-opacity duration-700">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-slate-900 shadow-inner" id="userInitial">?</div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold truncate" id="sideTeacherName">Memuat...</p>
+                        <p class="text-[9px] text-slate-500 truncate italic" id="sideSchoolName">Sekolah...</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
+            <!-- Header -->
+            <header class="h-20 bg-white/80 backdrop-blur-md border-b flex items-center justify-between px-8 sticky top-0 z-40">
+                <div class="flex items-center gap-6">
+                    <div class="flex flex-col">
+                        <label class="text-[9px] font-black text-slate-400 uppercase mb-1">Mata Pelajaran</label>
+                        <select id="mainSubject" class="font-bold text-slate-800 bg-transparent outline-none cursor-pointer hover:text-amber-500 transition-colors">
+                            <!-- Mata Pelajaran Inti -->
+                            <optgroup label="Mata Pelajaran Inti">
+                                <option value="Matematika">Matematika</option>
+                                <option value="IPA">IPA (Sains)</option>
+                                <option value="IPS">IPS (Sosial)</option>
+                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                <option value="Bahasa Inggris">Bahasa Inggris</option>
+                                <option value="Informatika">Informatika</option>
+                                <option value="PPKn">Pendidikan Pancasila</option>
+                                <option value="PAI">Pendidikan Agama & Budi Pekerti</option>
+                            </optgroup>
+                            <!-- Mata Pelajaran Praktek & Seni -->
+                            <optgroup label="Praktek & Seni">
+                                <option value="PJOK">PJOK (Olahraga)</option>
+                                <option value="Seni Budaya">Seni Budaya</option>
+                                <option value="Prakarya">Prakarya</option>
+                            </optgroup>
+                            <!-- Muatan Lokal -->
+                            <optgroup label="Muatan Lokal (Jabar)">
+                                <option value="Bahasa Sunda">Bahasa Sunda</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <span class="text-[10px] font-bold text-emerald-600" id="authStatus">SINKRONISASI CLOUD</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard -->
+            <div id="dashboardTab" class="p-6 lg:p-10 space-y-10">
+                <section>
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Halo, Bapak/Ibu Guru! 👋</h2>
+                        <p class="text-sm text-slate-500">Pilih modul yang ingin dibuat drafnya secara otomatis.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+                        <button onclick="openModal('CP/TP')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition-all text-left group">
+                            <div class="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center mb-4 text-xl group-hover:bg-indigo-500 group-hover:text-white transition-all">📄</div>
+                            <h4 class="font-bold text-slate-800 text-sm">CP & TP</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Target Capaian</p>
+                        </button>
+                        <button onclick="openModal('ATP')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition-all text-left group">
+                            <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-4 text-xl group-hover:bg-emerald-500 group-hover:text-white transition-all">🛤️</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Alur (ATP)</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Urutan Belajar</p>
+                        </button>
+                        <button onclick="openModal('Modul Ajar')" class="p-6 bg-white rounded-3xl border-2 border-amber-200 shadow-md hover:border-amber-500 hover:shadow-xl transition-all text-left group scale-105 z-10">
+                            <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-xl group-hover:bg-amber-500 group-hover:text-white transition-all">📘</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Modul Ajar</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Lengkap & Rinci</p>
+                        </button>
+                        <button onclick="openModal('Media')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition-all text-left group">
+                            <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center mb-4 text-xl group-hover:bg-purple-500 group-hover:text-white transition-all">🎞️</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Media</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Visual & Alat</p>
+                        </button>
+                        <button onclick="openModal('Asesmen')" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition-all text-left group">
+                            <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mb-4 text-xl group-hover:bg-rose-500 group-hover:text-white transition-all">📝</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Asesmen</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Soal & Rubrik</p>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 id="outputHeader" class="text-xs font-black text-slate-400 uppercase tracking-widest">Dokumen Hasil Generate</h2>
+                        <button id="copyBtn" class="text-[10px] font-bold text-amber-600 px-4 py-2 hover:bg-amber-50 rounded-full transition-all">Salin Isi Dokumen</button>
+                    </div>
+                    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl min-h-[600px] p-10 lg:p-20 relative overflow-hidden" id="outputArea">
+                        <div class="text-center py-44 opacity-20">
+                            <span class="text-6xl mb-4 block">✨</span>
+                            <p class="text-slate-900 font-bold uppercase tracking-widest text-xs">Siap Membuat Perangkat Ajar</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Profile Settings -->
+            <div id="profileTab" class="hidden p-6 lg:p-10">
+                <div class="max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden">
+                    <div class="p-10 border-b border-slate-100 bg-slate-50">
+                        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Data Resmi Pengajar</h2>
+                        <p class="text-slate-500 text-sm">Informasi ini akan muncul pada Kop Surat dan Lembar Pengesahan.</p>
+                    </div>
+                    
+                    <form id="profileForm" class="p-10 space-y-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Nama Lengkap & Gelar</label>
+                                <input type="text" id="teacherName" required placeholder="Contoh: Drs. Maman, M.Pd." class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 focus:ring-4 focus:ring-amber-500/10 outline-none">
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">NIP Guru</label>
+                                <input type="text" id="teacherNIP" placeholder="19XXXXXXXXXXXX" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 focus:ring-4 focus:ring-amber-500/10 outline-none">
+                            </div>
+                            <div class="space-y-4 md:col-span-2">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Nama Satuan Pendidikan (Sekolah)</label>
+                                <input type="text" id="schoolName" required placeholder="Contoh: SMP Negeri 1 Bandung" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 focus:ring-4 focus:ring-amber-500/10 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="pt-8 border-t border-slate-100">
+                            <h3 class="text-xs font-black text-slate-800 uppercase mb-6 tracking-widest">Pengesahan Kepala Sekolah</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-4">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Nama Kepala Sekolah</label>
+                                    <input type="text" id="headmasterName" placeholder="Nama & Gelar Kepsek" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 focus:ring-4 focus:ring-amber-500/10 outline-none">
+                                </div>
+                                <div class="space-y-4">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">NIP Kepala Sekolah</label>
+                                    <input type="text" id="headmasterNIP" placeholder="NIP Kepala Sekolah" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 focus:ring-4 focus:ring-amber-500/10 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-slate-900 text-white px-10 py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-xl active:scale-95">
+                                Simpan Profil Cloud 💾
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl p-10 scale-95 opacity-0 transition-all duration-300" id="modalContent">
+            <h3 class="text-2xl font-black text-slate-800 mb-2">Generate <span id="modalTypeName" class="text-amber-500">-</span></h3>
+            <p class="text-sm text-slate-500 mb-8 italic">Masukkan materi spesifik yang ingin dibuatkan drafnya.</p>
+            
+            <div class="space-y-6">
+                <div>
+                    <input type="text" id="topicInput" placeholder="Contoh: Kaulinan Barudak (Basa Sunda)" class="w-full p-5 rounded-2xl border border-slate-100 bg-slate-50 outline-none focus:ring-4 focus:ring-amber-500/20 font-bold text-xl">
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-12">
+                <button onclick="closeModal()" class="flex-1 px-6 py-5 border border-slate-100 rounded-2xl font-bold text-slate-400 hover:bg-slate-50 transition-all">Batal</button>
+                <button onclick="processGenerate()" class="flex-[2] px-6 py-5 bg-amber-500 text-white rounded-2xl font-black shadow-lg shadow-amber-200 hover:bg-amber-600 active:scale-95 transition-all">Generate Draf</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout -->
+    <div id="logoutOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md hidden z-[300] flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full p-10 rounded-[2.5rem] shadow-2xl text-center">
+            <h3 class="text-xl font-black text-slate-800 mb-4 tracking-tighter">Ingin Ganti Akun?</h3>
+            <p class="text-sm text-slate-500 mb-8 leading-relaxed">Sesi ini akan ditutup agar guru lain bisa menggunakan perangkat ini.</p>
+            <div class="flex flex-col gap-3">
+                <button onclick="doLogout()" class="w-full py-4 bg-rose-500 text-white rounded-2xl font-black hover:bg-rose-600">Ya, Logout</button>
+                <button onclick="document.getElementById('logoutOverlay').classList.add('hidden')" class="w-full py-4 text-slate-400 font-bold">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/95 backdrop-blur-sm hidden z-[200] flex flex-col items-center justify-center animate-in fade-in">
+        <div class="spinner"></div>
+        <h3 class="text-2xl font-black text-slate-800 mt-8 tracking-tighter">AI Sedang Merancang Dokumen...</h3>
+        <p class="text-sm text-slate-400 mt-2 font-medium italic">Dokumen sedang disesuaikan dengan kurikulum aktif.</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'edudev-pro-jabar';
+
+        let currentUser = null;
+        let userData = { name: "", nip: "", school: "", headmaster: "", headmasterNip: "" };
+        let selectedModule = "";
+        const apiKey = ""; 
+
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+        initAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadData();
+            }
+        });
+
+        async function loadData() {
+            if (!currentUser) return;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile');
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    userData = snap.data();
+                    populateForm();
+                    updateUI();
+                } else {
+                    switchTab('profile');
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function populateForm() {
+            document.getElementById('teacherName').value = userData.name || "";
+            document.getElementById('teacherNIP').value = userData.nip || "";
+            document.getElementById('schoolName').value = userData.school || "";
+            document.getElementById('headmasterName').value = userData.headmaster || "";
+            document.getElementById('headmasterNIP').value = userData.headmasterNip || "";
+        }
+
+        function updateUI() {
+            document.getElementById('userBadge').classList.remove('opacity-0');
+            document.getElementById('sideTeacherName').innerText = userData.name || "Guru Pengguna";
+            document.getElementById('sideSchoolName').innerText = userData.school || "Sekolah...";
+            document.getElementById('userInitial').innerText = userData.name ? userData.name.charAt(0).toUpperCase() : "?";
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+            const updated = {
+                name: document.getElementById('teacherName').value,
+                nip: document.getElementById('teacherNIP').value,
+                school: document.getElementById('schoolName').value,
+                headmaster: document.getElementById('headmasterName').value,
+                headmasterNip: document.getElementById('headmasterNIP').value
+            };
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile'), updated);
+                userData = updated;
+                updateUI();
+                alert("Profil berhasil disimpan!");
+                switchTab('dashboard');
+            } catch (err) { alert("Gagal simpan ke cloud."); }
+        });
+
+        window.switchTab = (tab) => {
+            const isDash = tab === 'dashboard';
+            document.getElementById('dashboardTab').classList.toggle('hidden', !isDash);
+            document.getElementById('profileTab').classList.toggle('hidden', isDash);
+            document.getElementById('navDash').classList.toggle('active', isDash);
+            document.getElementById('navDash').classList.toggle('text-slate-400', !isDash);
+            document.getElementById('navProf').classList.toggle('active', !isDash);
+            document.getElementById('navProf').classList.toggle('text-slate-400', isDash);
+        };
+
+        window.openModal = (type) => {
+            selectedModule = type;
+            document.getElementById('modalTypeName').innerText = type;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            setTimeout(() => document.getElementById('modalContent').classList.remove('scale-95', 'opacity-0'), 10);
+        };
+
+        window.closeModal = () => {
+            document.getElementById('modalContent').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => document.getElementById('modalOverlay').classList.add('hidden'), 300);
+        };
+
+        window.confirmLogout = () => { document.getElementById('logoutOverlay').classList.remove('hidden'); };
+        window.doLogout = async () => { await signOut(auth); location.reload(); };
+
+        window.processGenerate = async () => {
+            const topic = document.getElementById('topicInput').value;
+            if(!topic) return alert("Materi wajib diisi.");
+
+            closeModal();
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
+            const subject = document.getElementById('mainSubject').value;
+            
+            // Logika Instruksi Khusus Mata Pelajaran
+            let specialInstruction = "Gunakan standar bahasa Indonesia formal pendidikan.";
+            if(subject === "Bahasa Sunda") {
+                specialInstruction = "Gunakan Bahasa Sunda yang sesuai dengan standar kurikulum daerah Jawa Barat. Pastikan istilah teknis pendidikan tetap akurat dalam konteks Sunda.";
+            } else if(subject === "PJOK") {
+                specialInstruction = "Pastikan menyertakan langkah-langkah praktek lapangan yang aman bagi siswa.";
+            }
+
+            const prompt = `Anda adalah pakar Kurikulum Merdeka SMP. Buatlah ${selectedModule} profesional.
+            Mata Pelajaran: ${subject}
+            Materi Utama: ${topic}
+            Identitas Guru: ${userData.name || '[Nama Guru]'} (${userData.nip || '-'})
+            Satuan Pendidikan: ${userData.school || '[Nama Sekolah]'}
+            Kepala Sekolah: ${userData.headmaster || '[Nama Kepsek]'} (${userData.headmasterNip || '-'})
+
+            Output harus berupa HTML bersih (h2, h3, p, ul, tabel). Berikan bagian tanda tangan yang lengkap di akhir dokumen.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: specialInstruction + " Output HANYA HTML tanpa markdown." }] }
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('outputArea').innerHTML = data.candidates[0].content.parts[0].text;
+                document.getElementById('outputHeader').innerText = `DOKUMEN: ${selectedModule} - ${subject} (${topic})`;
+                if(window.MathJax) MathJax.typesetPromise();
+            } catch (err) {
+                document.getElementById('outputArea').innerHTML = "Gagal memproses AI.";
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+        };
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const range = document.createRange();
+            range.selectNode(document.getElementById('outputArea'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            alert("Berhasil disalin!");
+        });
+    </script>
+</body>
+</html>
